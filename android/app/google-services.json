@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "421846502281",
+    "firebase_url": "https://finalbooks-e821b.firebaseio.com",
+    "project_id": "finalbooks-e821b",
+    "storage_bucket": "finalbooks-e821b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:421846502281:android:5b2c8a32e12905a8f12f58",
+        "android_client_info": {
+          "package_name": "com.example.bookmybook"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "421846502281-0qavn30p99m8dtm59a3j5ffl52nvvflr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAA93c508tCiWSwLijl6Ham_jk13lrU3qQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "421846502281-0qavn30p99m8dtm59a3j5ffl52nvvflr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
