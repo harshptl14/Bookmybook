@@ -7,18 +7,41 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:uuid/uuid.dart';
 import 'package:path/path.dart' as path;
 
-
 getBooks(BookNotifier bookNotifier, String depname) async {
   //heroTag: 'harsh';
   //String dep = depname as String;
   QuerySnapshot snapshot = await Firestore.instance
       .collection("cspit")
       .document("department")
-      .collection(depname).orderBy('createdAt', descending: true)
+      .collection(depname)
+      .orderBy('createdAt', descending: true)
       .getDocuments();
 
   List<Book> _bookList = [];
-  
+
+  snapshot.documents.forEach((document) {
+    Book book = Book.fromMap(document.data);
+    _bookList.add(book);
+  });
+
+  bookNotifier.bookList = _bookList;
+}
+
+getBooksForFilter(
+    BookNotifier bookNotifier, String depname, String filter) async {
+  //heroTag: 'harsh';
+  //String dep = depname as String;
+  QuerySnapshot snapshot = await Firestore.instance
+      .collection("cspit")
+      .document("department")
+      .collection(depname)
+      .where('filter', isEqualTo: filter)
+      .getDocuments();
+  print('in Book_Api');
+  print(snapshot);
+
+  List<Book> _bookList = [];
+
   snapshot.documents.forEach((document) {
     Book book = Book.fromMap(document.data);
     _bookList.add(book);
@@ -32,7 +55,8 @@ getBooksForHomescreen(BookNotifier bookNotifier) async {
   QuerySnapshot snapshot = await Firestore.instance
       .collection("cspit")
       .document("department")
-      .collection("computer").orderBy('createdAt', descending: true)
+      .collection("computer")
+      .orderBy('createdAt', descending: true)
       .getDocuments();
 
   List<Book> _bookList = [];
@@ -45,7 +69,6 @@ getBooksForHomescreen(BookNotifier bookNotifier) async {
   bookNotifier.bookList = _bookList;
 }
 
-
 getBooksForUser(BookNotifier bookNotifier) async {
   FirebaseUser currentUser = await FirebaseAuth.instance.currentUser();
 
@@ -53,7 +76,7 @@ getBooksForUser(BookNotifier bookNotifier) async {
       .collection("cspit")
       .document("department")
       .collection("computer")
-      .where('userId', isEqualTo: currentUser.email)
+      .where('userId', isEqualTo: currentUser.uid)
       //.where('number', isEqualTo: currentUser.email)
       .getDocuments();
 
@@ -67,20 +90,24 @@ getBooksForUser(BookNotifier bookNotifier) async {
   bookNotifier.bookList = _bookList;
 }
 
-uploadFoodAndImage(Book food, bool isUpdating, File localFile, Function foodUploaded) async {
+uploadFoodAndImage(
+    Book food, bool isUpdating, File localFile, Function foodUploaded) async {
   if (localFile != null) {
     print("uploading image");
 
-    
     var fileExtension = path.extension(localFile.path);
     print(fileExtension);
 
     var uuid = Uuid().v4();
 
-    final StorageReference firebaseStorageRef =
-        FirebaseStorage.instance.ref().child('books/images/$uuid$fileExtension');
+    final StorageReference firebaseStorageRef = FirebaseStorage.instance
+        .ref()
+        .child('books/images/$uuid$fileExtension');
 
-    await firebaseStorageRef.putFile(localFile).onComplete.catchError((onError) {
+    await firebaseStorageRef
+        .putFile(localFile)
+        .onComplete
+        .catchError((onError) {
       print(onError);
       return false;
     });
@@ -94,8 +121,12 @@ uploadFoodAndImage(Book food, bool isUpdating, File localFile, Function foodUplo
   }
 }
 
-_uploadFood(Book food, bool isUpdating, Function foodUploaded, {String imageUrl}) async {
-  CollectionReference foodRef = Firestore.instance.collection('cspit').document('department').collection(food.department);
+_uploadFood(Book food, bool isUpdating, Function foodUploaded,
+    {String imageUrl}) async {
+  CollectionReference foodRef = Firestore.instance
+      .collection('cspit')
+      .document('department')
+      .collection(food.department);
   FirebaseUser currentUser = await FirebaseAuth.instance.currentUser();
   if (imageUrl != null) {
     food.image = imageUrl;
@@ -103,7 +134,7 @@ _uploadFood(Book food, bool isUpdating, Function foodUploaded, {String imageUrl}
 
   if (isUpdating) {
     food.updatedAt = Timestamp.now();
-    food.userId = currentUser.email;
+    food.userId = currentUser.uid;
     await foodRef.document(food.id).updateData(food.toMap());
 
     foodUploaded(food);
@@ -113,7 +144,7 @@ _uploadFood(Book food, bool isUpdating, Function foodUploaded, {String imageUrl}
     food.firstChar = fChar;
     print(fChar);
     food.createdAt = Timestamp.now();
-    food.userId = currentUser.email;
+    food.userId = currentUser.uid;
     DocumentReference documentRef = await foodRef.add(food.toMap());
 
     food.id = documentRef.documentID;
@@ -138,6 +169,11 @@ deleteFood(Book food, Function foodDeleted) async {
     print('image deleted');
   }
 
-  await Firestore.instance.collection('cspit').document('department').collection("computer").document(food.id).delete();
+  await Firestore.instance
+      .collection('cspit')
+      .document('department')
+      .collection("computer")
+      .document(food.id)
+      .delete();
   foodDeleted(food);
 }

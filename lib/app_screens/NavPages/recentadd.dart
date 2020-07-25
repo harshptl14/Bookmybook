@@ -1,5 +1,4 @@
-import 'package:bookmybook/app_screens/displayproduct/product.dart';
-import 'package:bookmybook/app_screens/test.dart';
+
 import 'package:flutter/material.dart';
 
 class RecentlyAdd extends StatefulWidget {
@@ -119,3 +118,4 @@ class Single_prod extends StatelessWidget {
      ) );
   }
 }
+

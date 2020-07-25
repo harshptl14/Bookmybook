@@ -1,14 +1,10 @@
 import 'dart:core' as prefix1;
 import 'dart:core';
-import 'package:bookmybook/api/book_api.dart';
-import 'package:bookmybook/app_screens/NavPages/Upload.dart';
-import 'package:bookmybook/app_screens/dialouge.dart';
-import 'package:bookmybook/models/book.dart';
-import 'package:bookmybook/notifier/book_notifier.dart';
-import 'package:carousel_pro/carousel_pro.dart' as prefix0;
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 Widget divider() {
   return Padding(
@@ -19,46 +15,50 @@ Widget divider() {
   );
 }
 
-class ThingForEdit extends StatefulWidget {
-  @override
-  _ThingState createState() => _ThingState();
-}
+var Map = <dynamic, dynamic>{};
 
-class _ThingState extends State<ThingForEdit> {
+class SearchThing extends StatefulWidget {
+  dynamic data;
+  SearchThing(this.data);
+  @override
+  _thingState createState() => _thingState();
+} 
+
+class _thingState extends State<SearchThing> {
+  Future<void> getcart() async {
+    FirebaseUser user = await FirebaseAuth.instance.currentUser();
+    String uid = user.uid;
+    DocumentSnapshot snapshot =
+        await Firestore.instance.collection('cart').document(uid).get();
+
+    setState(() {
+      Map = snapshot.data['product'];
+    });
+  }
+
   Icon searchIcon = new Icon(Icons.search);
   Icon bookIcon = new Icon(Icons.bookmark);
   @override
   Widget build(BuildContext context) {
-    BookNotifier foodNotifier = Provider.of<BookNotifier>(context);
-    double height = MediaQuery.of(context).size.height;
-    double width = MediaQuery.of(context).size.width;
-    _onFoodDeleted(Book food) {
-      Navigator.pop(context);
-      foodNotifier.deleteFood(food);
+
+    //String hello=foodNotifier.currentBook.number.toString();
+    String _phone = widget.data['number'].toString();
+        Future<void> _launched;
+
+    Future<void> _makePhoneCall(String url) async {
+      if (await canLaunch(url)) {
+        await launch(url);
+      } else {
+        throw 'Could not launch $url';
+      }
     }
 
     Widget imageCarousel = new Container(
         height: 400.0,
-        child: prefix0.Carousel(
-          boxFit: BoxFit.contain,
-          images: [
-            Image.network(
-              // ('${foodNotifier.currentBook.image}' + '?alt=media') != null
-              //     ? ('${foodNotifier.currentBook.image}' + '?alt=media')
-              //     : 'https://www.testingxperts.com/wp-content/uploads/2019/02/placeholder-img.jpg',
-              foodNotifier.currentBook.image != null
-                  ? foodNotifier.currentBook.image
+        child: Image.network(
+          widget.data['image'] != null
+                  ? widget.data['image']
                   : 'https://www.testingxperts.com/wp-content/uploads/2019/02/placeholder-img.jpg',
-            )
-          ],
-          autoplay: false,
-          dotBgColor: Colors.white10,
-          dotSize: 5,
-          dotIncreasedColor: Colors.black,
-          dotColor: Colors.grey,
-          dotIncreaseSize: 2,
-          animationCurve: Curves.fastOutSlowIn,
-          animationDuration: Duration(milliseconds: 1000),
         ));
     return Scaffold(
       body: CustomScrollView(
@@ -77,9 +77,9 @@ class _ThingState extends State<ThingForEdit> {
             ),
             actions: <Widget>[
               Container(
-                padding: EdgeInsets.only(top: 16, right: 300),
+                padding: EdgeInsets.only(top: 16, right: 90),
                 child: Text(
-                  "Edit",
+                  "BookMyBook",
                   style: TextStyle(
                     fontSize: 22,
                     color: Colors.black,
@@ -90,6 +90,16 @@ class _ThingState extends State<ThingForEdit> {
                   ),
                 ),
               ),
+              IconButton(
+                  icon: searchIcon,
+                  color: Colors.black,
+                  onPressed: () {
+                    heroTag:
+                    "search";
+                    // Navigator.push(context,
+                    //     MaterialPageRoute(builder: (context) => Test()));
+                  }),
+              IconButton(icon: bookIcon, color: Colors.black, onPressed: () {}),
             ],
             flexibleSpace: FlexibleSpaceBar(
               background: new ListView(children: <Widget>[imageCarousel]),
@@ -103,19 +113,19 @@ class _ThingState extends State<ThingForEdit> {
                   height: 50,
                   margin: EdgeInsets.only(top: 3),
                   child: ListTile(
-                    title: Text(foodNotifier.currentBook.title ?? '',
+                    title: Text(widget.data['title'] ?? '',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 22,
                           fontFamily: 'Montserrat',
                         )),
-                    trailing: Text(foodNotifier.currentBook.price ?? '',
+                    trailing: Text(widget.data['price'] ?? '',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 25,
                           fontFamily: 'Montserrat',
                         )),
-                    subtitle: Text(foodNotifier.currentBook.author ?? '',
+                    subtitle: Text(widget.data['author'] ?? '',
                         style: TextStyle(
                           fontFamily: 'Montserrat',
                         )),
@@ -133,7 +143,7 @@ class _ThingState extends State<ThingForEdit> {
                           fontSize: 18,
                           fontFamily: 'Montserrat',
                         )),
-                    subtitle: Text(foodNotifier.currentBook.about ?? '',
+                    subtitle: Text(widget.data['about'] ?? '',
                         style: TextStyle(
                           fontFamily: 'Montserrat',
                         )),
@@ -149,14 +159,14 @@ class _ThingState extends State<ThingForEdit> {
                         height: 55,
                         width: 55,
                         image: AssetImage('depimages/user.png')),
-                    title: Text(foodNotifier.currentBook.username ?? '',
+                    title: Text(widget.data['username'] ?? '',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 15,
                           fontFamily: 'Montserrat',
                         )),
                     subtitle:
-                        Text(foodNotifier.currentBook.number.toString() ?? '',
+                        Text(widget.data['number'].toString() ?? '',
                             style: TextStyle(
                               fontFamily: 'Montserrat',
                             )),
@@ -179,7 +189,7 @@ class _ThingState extends State<ThingForEdit> {
                           fontFamily: 'Montserrat',
                         )),
                     subtitle:
-                        Text(foodNotifier.currentBook.rent.toString() ?? '',
+                        Text(widget.data['rent'].toString() ?? '',
                             style: TextStyle(
                               fontFamily: 'Montserrat',
                             )),
@@ -303,18 +313,16 @@ Money''',
                 Container(
                     alignment: Alignment.center,
                     height: 60,
-                    width: width * 0.5,
+                    width: 192.5,
                     child: InkWell(
                       onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => Upload(
-                                      isUpdating: true,
-                                    )));
+                        Map[widget.data['title']] =
+                            widget.data['price'].toString();
+                        putdata();
+                        toast();
                       },
                       child: Text(
-                        'EDIT',
+                        'ADD TO BAG',
                         style: TextStyle(
                             fontFamily: 'Montserrat',
                             fontSize: 16.0,
@@ -324,23 +332,15 @@ Money''',
                 Container(
                   alignment: Alignment.center,
                   height: 60,
-                  width: width * 0.5,
-                  color: Colors.redAccent,
+                  width: 200,
+                  color: Colors.deepPurple,
                   child: InkWell(
-                    onTap: () async {
-                      final action = await Dialogs.yesAbortDialog(context,
-                          'Confirm', 'Are you sure want to delete this book?');
-                      if (action == DialogAction.yes) {
-                        setState(() {
-                          deleteFood(foodNotifier.currentBook, _onFoodDeleted);
-                          toast();
-                        });
-                      } else {
-                        setState(() => Navigator.of(context).pop());
-                      }
-                    },
+                    //onTap: () => navigateToDetail(snapshot.data[index]),
+                    onTap: () => setState(() {
+                      _launched = _makePhoneCall('tel:$_phone');
+                    }),
                     child: Text(
-                      'DELETE',
+                      'BUY / RENT',
                       style: TextStyle(
                           fontFamily: 'Montserrat',
                           fontSize: 16.0,
@@ -355,9 +355,18 @@ Money''',
     );
   }
 
+  Future putdata() async {
+    FirebaseUser user = await FirebaseAuth.instance.currentUser();
+    String uid = user.uid;
+    var product = <String, Object>{};
+    product['product'] = Map;
+
+    Firestore.instance.collection('cart').document(uid).updateData(product);
+  }
+
   void toast() {
     Fluttertoast.showToast(
-        msg: "Book Deleted",
+        msg: "Added to bag",
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.BOTTOM,
         timeInSecForIos: 1,

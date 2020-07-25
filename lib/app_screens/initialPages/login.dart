@@ -4,6 +4,8 @@ import 'package:bookmybook/notifier/auth_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+User userr = User();
+
 enum AuthMode { Signup, Login }
 
 class Login extends StatefulWidget {
@@ -17,9 +19,8 @@ class _LoginState extends State<Login> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _passwordController = new TextEditingController();
   AuthMode _authMode = AuthMode.Login;
-  String _errorMessage;
+  // String _errorMessage;
   String _dropDownValue;
-  User _user = User();
 
   @override
   void initState() {
@@ -40,10 +41,10 @@ class _LoginState extends State<Login> {
         Provider.of<AuthNotifier>(context, listen: false);
 
     if (_authMode == AuthMode.Login) {
-      login(_user, authNotifier);
+      login(userr, authNotifier);
     } else {
-      _showVerifyEmailSentDialog();
-      signup(_user, authNotifier);
+      // _showVerifyEmailSentDialog();
+      signup(userr, authNotifier);
       // sendEmailVerification();
 
     }
@@ -92,44 +93,43 @@ class _LoginState extends State<Login> {
   Widget _buildDisplayNameField() {
     return Column(
       children: <Widget>[
-
         Container(
-      padding: EdgeInsets.all(10),
-      child: DropdownButton(
-        iconEnabledColor: Colors.grey,
-        hint: _dropDownValue == null
-            ? Text('COLLEGE')
-            : Text(
-                _dropDownValue,
-                style: TextStyle(
-                  color: Colors.black,
-                  fontFamily: 'Montserrat',
-                ),
-              ),
-        isExpanded: true,
-        iconSize: 30.0,
-        style: TextStyle(
-          color: Colors.black,
-          fontFamily: 'Montserrat',
-        ),
-        items: ['adit', 'cspit', 'gcet'].map(
-          (val) {
-            return DropdownMenuItem<String>(
-              value: val,
-              child: Text(val),
-            );
-          },
-        ).toList(),
-        onChanged: (val) {
-          setState(
-            () {
-              _dropDownValue = val;
-              _user.college = val;
+          padding: EdgeInsets.all(10),
+          child: DropdownButton(
+            iconEnabledColor: Colors.grey,
+            hint: _dropDownValue == null
+                ? Text('COLLEGE')
+                : Text(
+                    _dropDownValue,
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontFamily: 'Montserrat',
+                    ),
+                  ),
+            isExpanded: true,
+            iconSize: 30.0,
+            style: TextStyle(
+              color: Colors.black,
+              fontFamily: 'Montserrat',
+            ),
+            items: ['adit', 'cspit', 'gcet'].map(
+              (val) {
+                return DropdownMenuItem<String>(
+                  value: val,
+                  child: Text(val),
+                );
+              },
+            ).toList(),
+            onChanged: (val) {
+              setState(
+                () {
+                  _dropDownValue = val;
+                  userr.college = val;
+                },
+              );
             },
-          );
-        },
-      ),
-    ),
+          ),
+        ),
         TextFormField(
           decoration: InputDecoration(
             labelText: "Display Name",
@@ -150,36 +150,32 @@ class _LoginState extends State<Login> {
             return null;
           },
           onSaved: (String value) {
-            _user.name = value;
+            userr.name = value;
           },
         ),
-
         TextFormField(
-      decoration: InputDecoration(
-        labelText: "Phone No",
-        
-        labelStyle: TextStyle(color: Colors.white54),
-      ),
-      keyboardType: TextInputType.number,
-      style: TextStyle(fontSize: 19, color: Colors.white),
-      cursorColor: Colors.white,
-      validator: (String value) {
-        if (value.isEmpty) {
-          return 'Phoneno is required';
-        }
+          decoration: InputDecoration(
+            labelText: "Phone No",
+            labelStyle: TextStyle(color: Colors.white54),
+          ),
+          keyboardType: TextInputType.number,
+          style: TextStyle(fontSize: 19, color: Colors.white),
+          cursorColor: Colors.white,
+          validator: (String value) {
+            if (value.isEmpty) {
+              return 'Phoneno is required';
+            }
 
-        if (value.length < 10 || value.length > 10) {
-          return 'Phone no length should be 10';
-        }
+            if (value.length < 10 || value.length > 10) {
+              return 'Phone no length should be 10';
+            }
 
-        return null;
-      },
-      onSaved: (String value) {
-        _user.number = value;
-      },
-    ),
-
-
+            return null;
+          },
+          onSaved: (String value) {
+            userr.number = value;
+          },
+        ),
       ],
     );
   }
@@ -188,7 +184,7 @@ class _LoginState extends State<Login> {
   //   return TextFormField(
   //     decoration: InputDecoration(
   //       labelText: "Phone No",
-        
+
   //       labelStyle: TextStyle(color: Colors.white54),
   //     ),
   //     keyboardType: TextInputType.number,
@@ -235,7 +231,7 @@ class _LoginState extends State<Login> {
         return null;
       },
       onSaved: (String value) {
-        _user.email = value;
+        userr.email = value;
       },
     );
   }
@@ -262,7 +258,7 @@ class _LoginState extends State<Login> {
         return null;
       },
       onSaved: (String value) {
-        _user.password = value;
+        userr.password = value;
       },
     );
   }
@@ -310,18 +306,18 @@ class _LoginState extends State<Login> {
                             children: <Widget>[
                               Container(
                                 padding:
-                                    EdgeInsets.fromLTRB(0.0, 20.0, 110.0, 0.0),
+                                    EdgeInsets.fromLTRB(0.0, 20.0, 100.0, 0.0),
                                 child: Text('Signup',
                                     style: TextStyle(
-                                        fontSize: 69.0,
+                                        fontSize: 60.0,
                                         fontWeight: FontWeight.bold)),
                               ),
                               Container(
                                 padding:
-                                    EdgeInsets.fromLTRB(220.0, 10.0, 80.0, 0.0),
+                                    EdgeInsets.fromLTRB(230.0, 20.0, 70.0, 0.0),
                                 child: Text('.',
                                     style: TextStyle(
-                                        fontSize: 80.0,
+                                        fontSize: 65.0,
                                         fontWeight: FontWeight.bold,
                                         color: Colors.deepPurple)),
                               ),
@@ -336,7 +332,7 @@ class _LoginState extends State<Login> {
                                     EdgeInsets.fromLTRB(0.0, 20.0, 110.0, 0.0),
                                 child: Text('Login',
                                     style: TextStyle(
-                                        fontSize: 80.0,
+                                        fontSize: 65.0,
                                         fontWeight: FontWeight.bold)),
                               ),
                               Container(
@@ -344,7 +340,7 @@ class _LoginState extends State<Login> {
                                     200.0, 20.0, 100.0, 0.0),
                                 child: Text('.',
                                     style: TextStyle(
-                                        fontSize: 80.0,
+                                        fontSize: 65.0,
                                         fontWeight: FontWeight.bold,
                                         color: Colors.deepPurple)),
                               ),
@@ -355,7 +351,6 @@ class _LoginState extends State<Login> {
                   _authMode == AuthMode.Signup
                       ? _buildDisplayNameField()
                       : Container(),
-               
                   _buildEmailField(),
                   _buildPasswordField(),
                   _authMode == AuthMode.Signup
@@ -400,34 +395,34 @@ class _LoginState extends State<Login> {
     );
   }
 
-  void _showVerifyEmailSentDialog() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        // return object of type Dialog
-        return AlertDialog(
-          title: new Text("Verify your account"),
-          content:
-              new Text("Link to verify account has been sent to your email"),
-          actions: <Widget>[
-            new FlatButton(
-              child: new Text("Dismiss"),
-              onPressed: () {
-                _changeFormToLogin();
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
+  // void _showVerifyEmailSentDialog() {
+  //   showDialog(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       // return object of type Dialog
+  //       return AlertDialog(
+  //         title: new Text("Verify your account"),
+  //         content:
+  //             new Text("Link to verify account has been sent to your email"),
+  //         actions: <Widget>[
+  //           new FlatButton(
+  //             child: new Text("Dismiss"),
+  //             onPressed: () {
+  //               _changeFormToLogin();
+  //               Navigator.of(context).pop();
+  //             },
+  //           ),
+  //         ],
+  //       );
+  //     },
+  //   );
+  // }
 
-  void _changeFormToLogin() {
-    _formKey.currentState.reset();
-    _errorMessage = "";
-    setState(() {
-      _authMode = AuthMode.Login;
-    });
-  }
+//   void _changeFormToLogin() {
+//     _formKey.currentState.reset();
+//     _errorMessage = "";
+//     setState(() {
+//       _authMode = AuthMode.Login;
+//     });
+//   }
 }

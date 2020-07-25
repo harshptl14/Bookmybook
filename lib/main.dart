@@ -6,47 +6,49 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
-
 void main() {
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
     statusBarColor: Colors.transparent,
     statusBarIconBrightness: Brightness.dark,
   ));
   runApp(MultiProvider(
-      providers: [
-        ChangeNotifierProvider(
-          builder: (context) => AuthNotifier(),
-          create: (BuildContext context) {
-            return AuthNotifier();
-          },
-        ),
-        ChangeNotifierProvider(
-          builder: (context) => BookNotifier(),
-          create : (BuildContext context){
-            return BookNotifier();
-          },
-        )
-      ],
-      child: BookApp(),
-    ));
+    providers: [
+      ChangeNotifierProvider(
+        builder: (context) => AuthNotifier(),
+        create: (BuildContext context) {
+          return AuthNotifier();
+        },
+      ),
+      ChangeNotifierProvider(
+        builder: (context) => BookNotifier(),
+        create: (BuildContext context) {
+          return BookNotifier();
+        },
+      )
+    ],
+    child: BookApp(),
+  ));
 }
 
 class BookApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(     
+    return MaterialApp(
+      // darkTheme: ThemeData(
+      //   brightness: Brightness.dark,
+      // ),
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.deepPurple,
-            appBarTheme: AppBarTheme(
-              brightness: Brightness.light,
-              elevation: 5,
-              color: ThemeData.light().canvasColor,
-            )
-        ),
+          primarySwatch: Colors.deepPurple,
+          fontFamily: 'Montserrat',
+          appBarTheme: AppBarTheme(
+            brightness: Brightness.light,
+            elevation: 5,
+            color: ThemeData.light().canvasColor,
+          )),
       home: Consumer<AuthNotifier>(
         builder: (context, notifier, child) {
-          return notifier.user != null ? MyApp() : Login();
+          return notifier.user != null ? MyApp(uid: uid) : Login();
         },
       ),
     );

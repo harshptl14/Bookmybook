@@ -3,7 +3,6 @@ import 'dart:core';
 import 'package:carousel_pro/carousel_pro.dart' as prefix0;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:bookmybook/app_screens/test.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -31,13 +30,14 @@ class NewThing extends StatefulWidget {
 
 class _thingState extends State<NewThing> {
   void initState() {
-    // TODO: implement initState
     super.initState();
-    Firestore.instance.collection('newbooks').getDocuments().then((results) {
-      setState(() {
-        object = results;
-      });
-    });
+    imageGet();
+
+    // Firestore.instance.collection('newbooks').getDocuments().then((results) {
+    //   setState(() {
+    //     object = results;
+    //   });
+    // });
   }
 
   Future<void> getcart() async {
@@ -49,6 +49,20 @@ class _thingState extends State<NewThing> {
     setState(() {
       Map = snapshot.data['product'];
     });
+  }
+
+  bool state;
+  String imageGet() {
+    setState(() {
+      state = false;
+    });
+    String cart =
+        'https://images-na.ssl-images-amazon.com/images/I/618YQosPQTL.jpg';
+    setState(() {
+      state = true;
+      print(cart);
+    });
+    return cart;
   }
 
   Icon searchIcon = new Icon(Icons.search);
@@ -64,13 +78,12 @@ class _thingState extends State<NewThing> {
       }
     }
 
-    Widget image_carousel = new Container(
+    Widget Image_carousel = new Container(
         height: 400.0,
         child: prefix0.Carousel(
           boxFit: BoxFit.contain,
           images: [
-            Image.network(
-                'https://images-na.ssl-images-amazon.com/images/I/618YQosPQTL.jpg'),
+            Image.network(imageGet()),
           ],
           autoplay: false,
           dotBgColor: Colors.white10,
@@ -82,223 +95,229 @@ class _thingState extends State<NewThing> {
           animationDuration: Duration(milliseconds: 1000),
         ));
     return Scaffold(
-      body: CustomScrollView(
-        slivers: <Widget>[
-          SliverAppBar(
-            expandedHeight: 420.0,
-            floating: false,
-            pinned: true,
-            snap: false,
-            leading: IconButton(
-              color: Colors.black,
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              icon: Icon(Icons.arrow_back),
-            ),
-            actions: <Widget>[
-              Container(
-                padding: EdgeInsets.only(top: 16, right: 90),
-                child: Text(
-                  "BookMyBook",
-                  style: TextStyle(
-                    fontSize: 22,
+      body: (state == false)
+          ? Center(
+              child: SizedBox(
+                  height: 30, width: 30, child: CircularProgressIndicator()))
+          : CustomScrollView(
+              slivers: <Widget>[
+                SliverAppBar(
+                  expandedHeight: 420.0,
+                  floating: false,
+                  pinned: true,
+                  snap: false,
+                  leading: IconButton(
                     color: Colors.black,
-                    fontFamily: 'Montserrat',
-                    fontWeight: FontWeight.bold,
-
-                    // fontWeight: FontWeight.bold,
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    icon: Icon(Icons.arrow_back),
                   ),
-                ),
-              ),
-              IconButton(
-                  icon: searchIcon,
-                  color: Colors.black,
-                  onPressed: () {
-                    heroTag:
-                    "search";
-                    // Navigator.push(context,
-                    //     MaterialPageRoute(builder: (context) => Test()));
-                  }),
-              IconButton(icon: bookIcon, color: Colors.black, onPressed: () {}),
-            ],
-            flexibleSpace: FlexibleSpaceBar(
-              background: new ListView(children: <Widget>[image_carousel]),
-            ),
-          ),
-          SliverFixedExtentList(
-              delegate: SliverChildListDelegate([
-                Container(
-                  alignment: Alignment.center,
-                  color: Colors.white,
-                  height: 50,
-                  margin: EdgeInsets.only(top: 3),
-                  child: ListTile(
-                    title: Text('Java',
+                  actions: <Widget>[
+                    Container(
+                      padding: EdgeInsets.only(top: 16, right: 90),
+                      child: Text(
+                        "BookMyBook",
                         style: TextStyle(
-                          fontWeight: FontWeight.bold,
                           fontSize: 22,
+                          color: Colors.black,
                           fontFamily: 'Montserrat',
-                        )),
-                    trailing: Text('400',
-                        style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          fontSize: 25,
-                          fontFamily: 'Montserrat',
-                        )),
-                    subtitle: Text('Robert Lafore',
-                        style: TextStyle(
-                          fontFamily: 'Montserrat',
-                        )),
+
+                          // fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                        icon: searchIcon,
+                        color: Colors.black,
+                        onPressed: () {
+                          heroTag:
+                          "search";
+                          // Navigator.push(context,
+                          //     MaterialPageRoute(builder: (context) => Test()));
+                        }),
+                    IconButton(
+                        icon: bookIcon, color: Colors.black, onPressed: () {}),
+                  ],
+                  flexibleSpace: FlexibleSpaceBar(
+                    background:
+                        new ListView(children: <Widget>[Image_carousel]),
                   ),
                 ),
-                Container(
-                  alignment: Alignment.center,
-                  margin: EdgeInsets.only(top: 20),
-                  color: Colors.white,
-                  height: 50,
-                  child: ListTile(
-                    title: Text('about',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
-                          fontFamily: 'Montserrat',
-                        )),
-                    subtitle: Text(
-                        'Basic book with the concepts of object oriented programming',
-                        style: TextStyle(
-                          fontFamily: 'Montserrat',
-                        )),
-                  ),
-                ),
-                Container(
-                  alignment: Alignment.center,
-                  margin: EdgeInsets.only(top: 40),
-                  color: Colors.white,
-                  height: 70,
-                  child: ListTile(
-                    leading: Image(
-                        height: 55,
-                        width: 55,
-                        image: AssetImage('depimages/user.png')),
-                    title: Text(object.documents[0].data["username"],
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15,
-                          fontFamily: 'Montserrat',
-                        )),
-                    subtitle: Text('9898569855',
-                        style: TextStyle(
-                          fontFamily: 'Montserrat',
-                        )),
-                  ),
-                ),
-                Container(
-                  padding: EdgeInsets.fromLTRB(0, 50, 0, 20),
-                  height: 30.0,
-                  width: MediaQuery.of(context).size.width,
-                  child: Row(
-                      //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: <Widget>[
-                        Container(
-                            padding: EdgeInsets.only(left: 25),
-                            height: 50,
-                            width: 200.5,
-                            child: Row(children: <Widget>[
-                              Icon(
-                                Icons.swap_horizontal_circle,
-                                size: 30,
-                                color: Colors.grey,
-                              ),
-                              divider(),
-                              Text(
-                                '''Help
+                SliverFixedExtentList(
+                    delegate: SliverChildListDelegate([
+                      Container(
+                        alignment: Alignment.center,
+                        color: Colors.white,
+                        height: 50,
+                        margin: EdgeInsets.only(top: 3),
+                        child: ListTile(
+                          title: Text('Java',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 22,
+                                fontFamily: 'Montserrat',
+                              )),
+                          trailing: Text('400',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 25,
+                                fontFamily: 'Montserrat',
+                              )),
+                          subtitle: Text('Robert Lafore',
+                              style: TextStyle(
+                                fontFamily: 'Montserrat',
+                              )),
+                        ),
+                      ),
+                      Container(
+                        alignment: Alignment.center,
+                        margin: EdgeInsets.only(top: 20),
+                        color: Colors.white,
+                        height: 50,
+                        child: ListTile(
+                          title: Text('about',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                                fontFamily: 'Montserrat',
+                              )),
+                          subtitle: Text(
+                              'Basic book with the concepts of object oriented programming',
+                              style: TextStyle(
+                                fontFamily: 'Montserrat',
+                              )),
+                        ),
+                      ),
+                      Container(
+                        alignment: Alignment.center,
+                        margin: EdgeInsets.only(top: 40),
+                        color: Colors.white,
+                        height: 70,
+                        child: ListTile(
+                          leading: Image(
+                              height: 55,
+                              width: 55,
+                              image: AssetImage('depimages/user.png')),
+                          title: Text('Harsh',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15,
+                                fontFamily: 'Montserrat',
+                              )),
+                          subtitle: Text('9898569855',
+                              style: TextStyle(
+                                fontFamily: 'Montserrat',
+                              )),
+                        ),
+                      ),
+                      Container(
+                        padding: EdgeInsets.fromLTRB(0, 50, 0, 20),
+                        height: 30.0,
+                        width: MediaQuery.of(context).size.width,
+                        child: Row(
+                            //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: <Widget>[
+                              Container(
+                                  padding: EdgeInsets.only(left: 25),
+                                  height: 50,
+                                  width: 200.5,
+                                  child: Row(children: <Widget>[
+                                    Icon(
+                                      Icons.swap_horizontal_circle,
+                                      size: 30,
+                                      color: Colors.grey,
+                                    ),
+                                    divider(),
+                                    Text(
+                                      '''Help
 Community''',
-                                style: TextStyle(
-                                  fontFamily: 'Montserrat',
-                                  fontSize: 16.0,
-                                  color: Colors.grey,
-                                ),
-                              ),
-                            ])),
-                        Container(
-                            padding: EdgeInsets.only(left: 35),
-                            height: 50,
-                            width: 190.5,
-                            child: Row(children: <Widget>[
-                              Icon(
-                                Icons.people,
-                                size: 30,
-                                color: Colors.grey,
-                              ),
-                              divider(),
-                              Text(
-                                '''Share
+                                      style: TextStyle(
+                                        fontFamily: 'Montserrat',
+                                        fontSize: 16.0,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                  ])),
+                              Container(
+                                  padding: EdgeInsets.only(left: 35),
+                                  height: 50,
+                                  width: 190.5,
+                                  child: Row(children: <Widget>[
+                                    Icon(
+                                      Icons.people,
+                                      size: 30,
+                                      color: Colors.grey,
+                                    ),
+                                    divider(),
+                                    Text(
+                                      '''Share
 Books''',
-                                style: TextStyle(
-                                  fontFamily: 'Montserrat',
-                                  fontSize: 16.0,
-                                  color: Colors.grey,
-                                ),
-                              ),
-                            ])),
-                      ]),
-                ),
-                Container(
-                  padding: EdgeInsets.fromLTRB(0, 0, 0, 40),
-                  height: 30.0,
-                  width: MediaQuery.of(context).size.width,
-                  child: Row(
-                      //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: <Widget>[
-                        Container(
-                            padding: EdgeInsets.only(left: 25),
-                            height: 50,
-                            width: 200.5,
-                            child: Row(children: <Widget>[
-                              Icon(
-                                Icons.contact_phone,
-                                size: 30,
-                                color: Colors.grey,
-                              ),
-                              divider(),
-                              Text(
-                                '''Improve
+                                      style: TextStyle(
+                                        fontFamily: 'Montserrat',
+                                        fontSize: 16.0,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                  ])),
+                            ]),
+                      ),
+                      Container(
+                        padding: EdgeInsets.fromLTRB(0, 0, 0, 40),
+                        height: 30.0,
+                        width: MediaQuery.of(context).size.width,
+                        child: Row(
+                            //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: <Widget>[
+                              Container(
+                                  padding: EdgeInsets.only(left: 25),
+                                  height: 50,
+                                  width: 200.5,
+                                  child: Row(children: <Widget>[
+                                    Icon(
+                                      Icons.contact_phone,
+                                      size: 30,
+                                      color: Colors.grey,
+                                    ),
+                                    divider(),
+                                    Text(
+                                      '''Improve
 Communication''',
-                                style: TextStyle(
-                                  fontFamily: 'Montserrat',
-                                  fontSize: 16.0,
-                                  color: Colors.grey,
-                                ),
-                              ),
-                            ])),
-                        Container(
-                            padding: EdgeInsets.only(left: 35),
-                            height: 50,
-                            width: 190.5,
-                            child: Row(children: <Widget>[
-                              Icon(
-                                Icons.monetization_on,
-                                size: 30,
-                                color: Colors.grey,
-                              ),
-                              divider(),
-                              Text(
-                                '''Save
+                                      style: TextStyle(
+                                        fontFamily: 'Montserrat',
+                                        fontSize: 16.0,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                  ])),
+                              Container(
+                                  padding: EdgeInsets.only(left: 35),
+                                  height: 50,
+                                  width: 190.5,
+                                  child: Row(children: <Widget>[
+                                    Icon(
+                                      Icons.monetization_on,
+                                      size: 30,
+                                      color: Colors.grey,
+                                    ),
+                                    divider(),
+                                    Text(
+                                      '''Save
 Money''',
-                                style: TextStyle(
-                                  fontFamily: 'Montserrat',
-                                  fontSize: 16.0,
-                                  color: Colors.grey,
-                                ),
-                              ),
-                            ])),
-                      ]),
-                ),
-              ]),
-              itemExtent: 150.0)
-        ],
-      ),
+                                      style: TextStyle(
+                                        fontFamily: 'Montserrat',
+                                        fontSize: 16.0,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                  ])),
+                            ]),
+                      ),
+                    ]),
+                    itemExtent: 150.0)
+              ],
+            ),
       bottomNavigationBar: Material(
         elevation: 15,
         child: Container(
@@ -314,10 +333,10 @@ Money''',
                     width: 192.5,
                     child: InkWell(
                       onTap: () {
-                        Map[widget.computer.data["title"].toString()] =
-                            widget.computer.data["price"];
-                        putdata();
-                        toast();
+                        // Map[widget.computer.data["title"].toString()] =
+                        //     widget.computer.data["price"];
+                        // putdata();
+                        // toast();
                       },
                       child: Text(
                         'ADD TO BAG',

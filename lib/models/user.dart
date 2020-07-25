@@ -4,6 +4,9 @@ class User {
   String password;
   String number;
   String college;
+  String uid;
+  String chattingWith;
+  String chattedWith;
 
   User();
 
@@ -13,6 +16,9 @@ class User {
     password = data['password'];
     number = data['number'];
     college = data['college'];
+    uid = data['uid'];
+    chattingWith = data['chattingWith'];
+    chattedWith = data['chattedWith'];
   }
 
   Map<String, dynamic> toMap(){
@@ -22,6 +28,9 @@ class User {
       'password' : password,
       'number' : number,
       'college' : college,
+      'uid' : uid,
+      'chattingWith' : chattingWith,
+      'chattedWith' : chattedWith,
     };
 
   }
